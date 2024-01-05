@@ -20,6 +20,14 @@ resource "aws_vpc" "vpc" {
 
 }
 
+#Create public addres
+resource "aws_subnet" "public_subnet" {
+  vpc_id            = aws_vpc.custom_vpc.id
+  cidr_block        = "192.168.10.0/24"
+  availability_zone = "us-east-2c"
+
+}
+
 #Create IGW in us-east-1
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
