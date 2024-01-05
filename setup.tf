@@ -24,7 +24,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.custom_vpc.id
   cidr_block        = "192.168.10.0/24"
-  availability_zone = "us-east-2c"
+  availability_zone = "us-east-1"
 
 }
 
