@@ -2,14 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-
-
-#Get Linux AMI ID using SSM Parameter endpoint in us-east-1
-#data "aws_ssm_parameter" "webserver-ami" {
-#  name = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
-#}
-
-#Create VPC in us-east-1
 resource "aws_vpc" "vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -17,23 +9,18 @@ resource "aws_vpc" "vpc" {
   tags = {
     Name = "terraform-vpc"
   }
-
 }
 
-#Create public addres
-resource "aws_subnet" "public_subnet" {
-  vpc_id            = aws_vpc.custom_vpc.id
-  cidr_block        = "192.168.10.0/24"
-  availability_zone = "us-east-1"
-
+resource "aws_subnet" "subnet" {
+  availability_zone = element(data.aws_availability_zones.azs.names, 0)
+  vpc_id            = aws_vpc.vpc.id  # CORREGIDO POR PROBLEMAS DE REFERENCIAS CON EL MAIN.TF
+  cidr_block        = "10.0.1.0/24"
 }
 
-#Create IGW in us-east-1
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 }
 
-#Get main route table to modify
 data "aws_route_table" "main_route_table" {
   filter {
     name   = "association.main"
@@ -44,7 +31,7 @@ data "aws_route_table" "main_route_table" {
     values = [aws_vpc.vpc.id]
   }
 }
-#Create route table in us-east-1
+
 resource "aws_default_route_table" "internet_route" {
   default_route_table_id = data.aws_route_table.main_route_table.id
   route {
@@ -56,20 +43,12 @@ resource "aws_default_route_table" "internet_route" {
   }
 }
 
-#Get all available AZ's in VPC for master region
-data "aws_availability_zones" "azs" {
-  state = "available"
-}
-
-#Create subnet # 1 in us-east-1
-resource "aws_subnet" "subnet" {
-  availability_zone = element(data.aws_availability_zones.azs.names, 0)
+resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = "192.168.10.0/24"
+  availability_zone = "us-east-1"
 }
 
-
-#Create SG for allowing TCP/80 & TCP/22
 resource "aws_security_group" "sg" {
   name        = "sg"
   description = "Allow TCP/80 & TCP/22"
@@ -82,7 +61,7 @@ resource "aws_security_group" "sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
-    description = "allow traffic from TCP/80"
+    description = "Allow traffic from TCP/80"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -99,3 +78,4 @@ resource "aws_security_group" "sg" {
 output "Webserver-Public-IP" {
   value = aws_instance.webserver.public_ip
 }
+
