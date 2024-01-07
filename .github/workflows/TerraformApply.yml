@@ -20,6 +20,13 @@ jobs:
     - name: Verify Terraform version
       run: terraform --version
 
+    - name: Configure AWS credentials
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+        cat $GITHUB_ENV
+
+
     - name: printing
       run: |
           echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
