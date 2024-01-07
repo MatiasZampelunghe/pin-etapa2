@@ -38,7 +38,7 @@ resource "aws_dynamodb_table" "tf_lock_state" {
   billing_mode = "PAY_PER_REQUEST"
 
   # Hash key is required, and must be an attribute
-  hash_key = "LockID"
+  hash_key = "mundose"
 
   # Attribute LockID is required for TF to use this table for lock state
   attribute {
