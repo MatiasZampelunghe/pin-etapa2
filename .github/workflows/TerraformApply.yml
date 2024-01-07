@@ -20,6 +20,12 @@ jobs:
     - name: Verify Terraform version
       run: terraform --version
 
+    - name: printing
+      run: |
+          echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+          echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+
+
     - name: Terraform init
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
