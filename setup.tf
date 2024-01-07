@@ -10,6 +10,9 @@ resource "aws_vpc" "vpc" {
     Name = "terraform-vpc"
   }
 }
+data "aws_availability_zones" "azs" {
+  state = "available"
+}
 
 resource "aws_subnet" "subnet" {
   availability_zone = element(data.aws_availability_zones.azs.names, 0)
